@@ -49,7 +49,7 @@ public class UniversalMediaController extends FrameLayout {
 	private static final int FADE_OUT = 1;
 	private static final int SHOW_PROGRESS = 2;
 	private static final int SHOW_LOADING = 3;
-//    private boolean mFullscreenEnabled = false;
+	//private boolean mFullscreenEnabled = false;
 	private static final int HIDE_LOADING = 4;
 	private static final int SHOW_ERROR = 5;
 	private static final int HIDE_ERROR = 6;
@@ -64,6 +64,7 @@ public class UniversalMediaController extends FrameLayout {
 	private TextView mEndTime, mCurrentTime;
 	private TextView mTitle;
 	private boolean mShowing = true;
+	private boolean mControlsDisabled = false;
 	private boolean mDragging;
 	private boolean mScalable = false;
 	private boolean mIsFullScreen = false;
@@ -321,6 +322,7 @@ public class UniversalMediaController extends FrameLayout {
 	 *                the controller until hide() is called.
 	 */
 	public void show(int timeout) {//只负责上下两条bar的显示,不负责中央loading,error,playBtn的显示.
+		if (mControlsDisabled) return;
 		if (!mShowing) {
 			setProgress();
 			if (mTurnButton != null) {
@@ -335,9 +337,11 @@ public class UniversalMediaController extends FrameLayout {
 		if (getVisibility() != VISIBLE) {
 			setVisibility(VISIBLE);
 		}
+		
 		if (mTitleLayout.getVisibility() != VISIBLE) {
 			mTitleLayout.setVisibility(VISIBLE);
 		}
+		
 		if (mControlLayout.getVisibility() != VISIBLE) {
 			mControlLayout.setVisibility(VISIBLE);
 		}
@@ -354,6 +358,15 @@ public class UniversalMediaController extends FrameLayout {
 		}
 	}
 	
+	public void disableControls() {
+		hide();
+		mControlsDisabled = true;
+	}
+	
+	public void enableControls() {
+		mControlsDisabled = false;
+	}
+	
 	public boolean isShowing() {
 		return mShowing;
 	}
@@ -366,7 +379,7 @@ public class UniversalMediaController extends FrameLayout {
 			mShowing = false;
 		}
 	}
-
+	
 	private void showCenterView(int resId) {
 		if (resId == R.id.loading_layout) {
 			if (loadingLayout.getVisibility() != VISIBLE) {
